@@ -31,7 +31,7 @@ local kind_icons = {
 cmp.setup({
   snippet = {
     expand = function(args)
-      vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+      require('luasnip').lsp_expand(args.body)
     end,
   },
   -- experimental = {
@@ -48,11 +48,11 @@ cmp.setup({
       vim_item.kind = " " .. kind_icons[kind] .. " "
       vim_item.kind_hl_group = "CmpItemKind" .. kind
       if entry:is_deprecated() then
-        vim_item.abbr_hl_group = "LspDeprecated"
+        vim_item.abbr_hl_group = "CmpItemAbbrDeprecated"
       end
 
       vim_item.menu = "(" .. kind .. ")"
-      vim_item.menu_hl_group = "CmpKindName"
+      vim_item.menu_hl_group = "CmpItemMenu"
       return vim_item
     end,
     fields = { 'kind', 'abbr', 'menu' },
@@ -82,21 +82,22 @@ cmp.setup({
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
+    { name = 'luasnip' },
   }, {
     { name = 'buffer' },
   })
 })
 
-vim.keymap.set({"i", "s"}, "<M-Right>", function()
-  if vim.snippet.active { direction = 1 } then
-    vim.snippet.jump(1)
-  end
-end)
-vim.keymap.set({"i", "s"}, "<M-Left>", function()
-  if vim.snippet.active { direction = -1 } then
-    vim.snippet.jump(-1)
-  end
-end)
+local ls = require("luasnip")
+vim.keymap.set({"i"}, "<C-z>", function() ls.expand() end, {silent = true})
+vim.keymap.set({"i", "s"}, "<M-Right>", function() ls.jump(1) end, {silent = true})
+vim.keymap.set({"i", "s"}, "<M-Left>", function() ls.jump(-1) end, {silent = true})
+
+vim.keymap.set({"i", "s"}, "<C-E>", function()
+	if ls.choice_active() then
+		ls.change_choice(1)
+	end
+end, {silent = true})
 
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),

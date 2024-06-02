@@ -2,10 +2,10 @@ local mapping = require("simplyfile.mapping")
 local simplyfile = require("simplyfile")
 simplyfile.setup {
   border = {
-    up = "single",
-    left = "single",
+    up    = "single",
+    left  = "single",
     right = "single",
-    main = "single",
+    main  = "single",
   },
   default_keymaps = true,
   keymaps = {
@@ -15,7 +15,7 @@ simplyfile.setup {
       }, function(choice)
         if choice == "Yes" then
           vim.cmd("silent !trash " .. dir.absolute)
----@diagnostic disable-next-line: missing-fields
+          ---@diagnostic disable-next-line: missing-fields
           mapping.refresh { absolute = "" }
         end
       end)
@@ -31,9 +31,18 @@ simplyfile.setup {
     ["<C-p>"] = mapping.current_path_as_cwd,
   },
   win_opt = {
+    up = {},
+    left = {},
     right = {
       wrap = false,
     },
+    main = {},
+  },
+  margin = {
+    right = 10,
+    left = 10,
+    up = 3,
+    down = 3,
   },
 }
 

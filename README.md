@@ -1,1 +1,1 @@
-# Just A Minimal Neovim Config
+# Just A Neovim Config

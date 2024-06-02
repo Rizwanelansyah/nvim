@@ -15,6 +15,10 @@ vim.opt.rtp:prepend(lazypath)
 
 local ok, plugin = pcall(require, "rizwan.plugin")
 if ok then
-  require("lazy").setup(plugin)
+  require("lazy").setup(plugin, {
+    ui = {
+      border = "single",
+    },
+  })
   require("rizwan.after")
 end

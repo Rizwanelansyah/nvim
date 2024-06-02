@@ -1,6 +1,5 @@
 return function(_, bufnr)
   local opts = { buffer = bufnr, noremap = true, silent = true }
-  vim.keymap.set('i', '<C-Space>', require("cmp").complete, opts)
   vim.keymap.set('n', 'lf', vim.lsp.buf.format, opts)
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)

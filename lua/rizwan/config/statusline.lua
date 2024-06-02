@@ -7,6 +7,10 @@ local function hl(name)
   return vim.api.nvim_get_hl(0, { name = name })
 end
 
+---
+---@param name string
+---@param opt vim.api.keyset.highlight
+---@return any
 local function shl(name, opt)
   vim.api.nvim_set_hl(0, name, opt)
   return name
@@ -77,6 +81,7 @@ local lsp_clients_color = {
   cssls = icext.css.color,
   emmet_ls = c.green,
   jsonls = icext.json.color,
+  ccls = icext.c.color,
 }
 
 local lsp_clients_icon = {
@@ -87,6 +92,7 @@ local lsp_clients_icon = {
   html = " ",
   cssls = " ",
   jsonls = " ",
+  ccls = " ",
 }
 
 function M.Mode()
@@ -99,18 +105,17 @@ function M.Mode()
   return txt
 end
 
-function M.File(buf, bg)
-  if not bg then bg = hl("Normal").bg end
+function M.File(buf, rev)
   if buf == 0 then buf = vim.api.nvim_get_current_buf() end
   local fn = vim.fs.basename(vim.api.nvim_buf_get_name(buf))
   local ft = vim.filetype.match { filename = fn }
   local icon_ft, icon_hl = devicon.get_icon_by_filetype(ft, { default = true })
 
-  local rev_file_hl = shl("StlFileIconReverse" .. buf, { fg = c.black, bg = hl(icon_hl).fg })
+  local rev_file_hl = shl("StlFileIconReverse" .. buf, { fg = c.black, bg = hl(icon_hl).fg, reverse = rev })
   local txt = "%#" ..
-      shl("StlFileSide" .. buf, { fg = hl(icon_hl).fg, bg = bg }) ..
+      shl("StlFileSide" .. buf, { fg = rev and c.black or hl(icon_hl).fg, bg = hl("Normal").bg }) ..
       "#%#" .. rev_file_hl .. "# " .. icon_ft .. " "
-  txt = txt .. "%#" .. shl("StlFileIcon" .. buf, { fg = hl(icon_hl).fg, bg = c.black }) .. "#"
+  txt = txt .. "%#" .. shl("StlFileIcon" .. buf, { fg = hl(icon_hl).fg, bg = c.black, reverse = rev }) .. "#"
   txt = txt .. "%#StlFileIcon".. buf .."# " .. buf .. ":" .. (fn == "" and "no_name" or fn) .. " "
 
   local ro = vim.api.nvim_get_option_value("readonly", { buf = buf }) and not vim.api.nvim_get_option_value("modifiable", { buf = buf })
@@ -124,9 +129,10 @@ function M.File(buf, bg)
     col = c.green
     icon = " "
   end
-  txt = txt .. "%#" .. shl("StlNormal", { fg = hl("FloatBorder").fg, bg = c.black }) .. "# "
-  txt = txt .. "%#" .. shl("StlFilePermission" .. buf, { fg = col, bg = c.black }) .. "#" .. icon
-  txt = txt .. "%#" .. shl("StlFileEnd" .. buf, { fg = c.black, bg = bg }) .. "#"
+  txt = txt .. "%#" .. shl("StlNormal" .. (rev and "Rev" or ""), { fg = rev and hl(icon_hl).fg or hl("FloatBorder").fg, bg = rev and col or c.black })
+  txt = txt .. "#".. (rev and "" or "") .. " "
+  txt = txt .. "%#" .. shl("StlFilePermission" .. buf, { fg = col, bg = c.black, reverse = rev }) .. "#" .. icon
+  txt = txt .. "%#" .. shl("StlFileEnd" .. buf, { fg = rev and col or c.black, bg = hl("Normal").bg }) .. "#"
   return txt
 end
 
@@ -201,8 +207,24 @@ function M.Diagnostic()
   return txt
 end
 
+function M.Git()
+  local txt = "%#" .. shl("StlGitSide", { fg = c.orange, bg = hl("Normal").bg }) .. "#%#"
+  txt = txt .. shl("StlGit", { bg = c.orange, fg = c.black }) .. "#  "
+  txt = txt .. vim.g.branch_name .. " %#StlGitSide#"
+  return txt
+end
+
+function M.FullFilePath()
+  local txt = "%#" .. shl("StlFullPathSide", { bg = hl("Normal").bg, fg = c.black }) .. "#%#"
+  txt = txt .. shl("StlFullPath", { bg = c.black, fg = c.orange }) .. "#%= " .. vim.api.nvim_buf_get_name(0) .. "%= %#StlFullPathSide#"
+  return txt
+end
+
 function M.get()
   local left = M.Mode() .. M.File(0)
+  if vim.fs.root(0, { ".git" }) then
+    left = left .. M.Git()
+  end
   local right = M.Location()
   local clients = vim.lsp.get_clients()
   if #clients > 0 then
@@ -212,7 +234,7 @@ function M.get()
   if #diags > 0 then
     right = M.Diagnostic() .. right
   end
-  return left .. "%=" .. right
+  return left .. M.FullFilePath() .. right
 end
 
 return M
