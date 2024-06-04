@@ -1,6 +1,6 @@
 require('onedark').setup {
   style = 'dark',      -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'
-  transparent = true,
+  transparent = false,
   cmp_itemkind_reverse = true,
   ending_tildes = false,
   code_style = {

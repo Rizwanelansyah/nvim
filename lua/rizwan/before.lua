@@ -9,9 +9,10 @@ vim.o.showmatch = true
 vim.o.wrap = false
 vim.o.foldlevel = 10000
 vim.o.foldmethod = 'expr'
+vim.o.laststatus = 3
+vim.o.scrolloff = 10
 vim.cmd[[ set foldtext=v:lua.require'rizwan.config.utils'.foldtext() ]]
-vim.cmd("set formatoptions-=cro")
-vim.cmd("set fillchars+=fold:\\ ")
+vim.cmd[[ set fillchars+=fold:\ " ]]
 
 vim.g.mapleader = " "
 vim.g.loaded_netrwPlugin = 0

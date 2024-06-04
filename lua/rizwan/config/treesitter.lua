@@ -14,5 +14,6 @@ vim.api.nvim_create_autocmd({'BufEnter','BufAdd','BufNew','BufNewFile','BufWinEn
   group = vim.api.nvim_create_augroup('Treesitter', {}),
   callback = function()
     vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+    vim.cmd("set formatoptions-=cro")
   end
 })

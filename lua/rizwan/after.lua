@@ -1,17 +1,16 @@
 local on_color_scheme = function()
   local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
   local pmenu = vim.api.nvim_get_hl(0, { name = "Pmenu" })
-  local pmenu_sel = vim.api.nvim_get_hl(0, { name = "PmenuSel" })
   local colors = require("onedark.colors")
-  vim.api.nvim_set_hl(0, "Title", { fg = normal.fg, bg = normal.bg, undercurl = true })
+  local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
+  vim.api.nvim_set_hl(0, "Title", { fg = normal.fg, bg = normal.bg, italic = true })
   vim.api.nvim_set_hl(0, "NormalFloat", { fg = normal.fg, bg = normal.bg })
   vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#989898", bg = normal.bg })
   vim.api.nvim_set_hl(0, "LspDeprecated", { fg = colors.yellow, strikethrough = true })
   vim.api.nvim_set_hl(0, "CmpKindName", { fg = colors.purple, italic = true })
   vim.api.nvim_set_hl(0, "LineNr", { bg = pmenu.bg, fg = pmenu.fg })
   vim.api.nvim_set_hl(0, "CursorLineNr", { reverse = true, italic = true })
-
-  local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
+  vim.api.nvim_set_hl(0, "MatchParen", { fg = colors.orange, bold = true })
   vim.api.nvim_set_hl(0, "Folded", { fg = comment.fg, bg = normal.bg, italic = true })
 end
 
@@ -21,10 +20,18 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 on_color_scheme()
 
+require("rizwan.config.lsp.progress")
 require("rizwan.config.lsp")
 vim.cmd [[ set statusline=%!v:lua.require'rizwan.config.statusline'.get() ]]
-vim.cmd [[ set winbar=%!v:lua.require'rizwan.config.winbar'.get() ]]
+vim.o.showtabline = 2
+vim.cmd [[ set tabline=%!v:lua.require'rizwan.config.tabline'.get() ]]
 vim.cmd [[ set statuscolumn=%!v:lua.require'rizwan.config.statuscol'.get() ]]
+vim.api.nvim_create_autocmd('DiagnosticChanged', {
+  callback = function()
+    vim.cmd.redraws()
+  end,
+})
+require("rizwan.overrides.ui")
 
 vim.keymap.set('n', '<leader>bb', ':buffer ')
 vim.keymap.set('n', '<leader>bn', '<CMD>bnext<CR>')

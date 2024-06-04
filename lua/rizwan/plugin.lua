@@ -38,25 +38,25 @@ return {
   },
 
   {
-    "j-hui/fidget.nvim",
-    config = function()
-      local f = require("fidget")
-      f.setup {}
-    end,
-  },
-
-  {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = cfg("treesitter"),
   },
 
   {
-    'glacambre/firenvim',
-
-    lazy = not vim.g.started_by_firenvim,
-    build = function()
-      vim.fn["firenvim#install"](0)
+    'rcarriga/nvim-notify',
+    config = function()
+      local n = require("notify")
+      ---@diagnostic disable-next-line: missing-fields
+      n.setup {
+        background_colour = "#000000",
+        fps = 10,
+        time_formats = {
+          notification = "%H:%M:%S",
+          notification_history = "%H:%M:%S",
+        },
+      }
+      vim.notify = n
     end
   },
 

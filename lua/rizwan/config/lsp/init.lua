@@ -8,15 +8,13 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
 
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
   vim.lsp.handlers.signature_help, {
-    border = border
+    border = border,
   }
 )
 
-vim.lsp.handlers["textDocument/diagnostic"] = function()end
 
 vim.diagnostic.config {
   float = { border = border },
-  signs = false,
 }
 
 local lsp = require("lspconfig")
@@ -33,11 +31,22 @@ local servers = {
   intelephense = {},
   ccls = {},
   taplo = {},
+  gopls = {
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+        gofumpt = true,
+      },
+    },
+  },
 }
 
 for server, opt in pairs(servers) do
   lsp[server].setup(vim.tbl_extend("force", {
     capabilities = capabilities,
     on_attach = require("rizwan.config.lsp.on_attach"),
-  }, opt))
+  }, type(opt) == "function" and opt() or opt))
 end

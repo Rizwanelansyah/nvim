@@ -34,9 +34,6 @@ cmp.setup({
       require('luasnip').lsp_expand(args.body)
     end,
   },
-  -- experimental = {
-  --   ghost_text = true,
-  -- },
   view = {
     ---@diagnostic disable-next-line: missing-fields
     entries = { "wildmenu" },
@@ -45,7 +42,7 @@ cmp.setup({
   formatting = {
     format = function (entry, vim_item)
       local kind = vim_item.kind
-      vim_item.kind = " " .. kind_icons[kind] .. " "
+      vim_item.kind = " " .. (kind_icons[kind] or "??") .. " "
       vim_item.kind_hl_group = "CmpItemKind" .. kind
       if entry:is_deprecated() then
         vim_item.abbr_hl_group = "CmpItemAbbrDeprecated"

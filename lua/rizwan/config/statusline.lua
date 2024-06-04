@@ -7,7 +7,6 @@ local function hl(name)
   return vim.api.nvim_get_hl(0, { name = name })
 end
 
----
 ---@param name string
 ---@param opt vim.api.keyset.highlight
 ---@return any
@@ -82,6 +81,7 @@ local lsp_clients_color = {
   emmet_ls = c.green,
   jsonls = icext.json.color,
   ccls = icext.c.color,
+  gopls = icext.go.color,
 }
 
 local lsp_clients_icon = {
@@ -93,6 +93,7 @@ local lsp_clients_icon = {
   cssls = " ",
   jsonls = " ",
   ccls = " ",
+  gopls = " ",
 }
 
 function M.Mode()
@@ -105,20 +106,21 @@ function M.Mode()
   return txt
 end
 
-function M.File(buf, rev)
+function M.File(buf)
   if buf == 0 then buf = vim.api.nvim_get_current_buf() end
   local fn = vim.fs.basename(vim.api.nvim_buf_get_name(buf))
   local ft = vim.filetype.match { filename = fn }
   local icon_ft, icon_hl = devicon.get_icon_by_filetype(ft, { default = true })
 
-  local rev_file_hl = shl("StlFileIconReverse" .. buf, { fg = c.black, bg = hl(icon_hl).fg, reverse = rev })
+  local rev_file_hl = shl("StlFileIconReverse" .. buf, { fg = c.black, bg = hl(icon_hl).fg })
   local txt = "%#" ..
-      shl("StlFileSide" .. buf, { fg = rev and c.black or hl(icon_hl).fg, bg = hl("Normal").bg }) ..
+      shl("StlFileSide" .. buf, { fg = hl(icon_hl).fg, bg = hl("Normal").bg }) ..
       "#%#" .. rev_file_hl .. "# " .. icon_ft .. " "
-  txt = txt .. "%#" .. shl("StlFileIcon" .. buf, { fg = hl(icon_hl).fg, bg = c.black, reverse = rev }) .. "#"
-  txt = txt .. "%#StlFileIcon".. buf .."# " .. buf .. ":" .. (fn == "" and "no_name" or fn) .. " "
+  txt = txt .. "%#" .. shl("StlFileIcon" .. buf, { fg = hl(icon_hl).fg, bg = c.black }) .. "#"
+  txt = txt .. "%#StlFileIcon" .. buf .. "# " .. buf .. ":" .. (fn == "" and "no_name" or fn) .. " "
 
-  local ro = vim.api.nvim_get_option_value("readonly", { buf = buf }) and not vim.api.nvim_get_option_value("modifiable", { buf = buf })
+  local ro = vim.api.nvim_get_option_value("readonly", { buf = buf }) and
+  not vim.api.nvim_get_option_value("modifiable", { buf = buf })
   local ch = vim.api.nvim_get_option_value("modified", { buf = buf })
   local col = "#989898"
   local icon = "󰦨 "
@@ -129,25 +131,26 @@ function M.File(buf, rev)
     col = c.green
     icon = " "
   end
-  txt = txt .. "%#" .. shl("StlNormal" .. (rev and "Rev" or ""), { fg = rev and hl(icon_hl).fg or hl("FloatBorder").fg, bg = rev and col or c.black })
-  txt = txt .. "#".. (rev and "" or "") .. " "
-  txt = txt .. "%#" .. shl("StlFilePermission" .. buf, { fg = col, bg = c.black, reverse = rev }) .. "#" .. icon
-  txt = txt .. "%#" .. shl("StlFileEnd" .. buf, { fg = rev and col or c.black, bg = hl("Normal").bg }) .. "#"
+  txt = txt .. "%#" .. shl("StlNormal", { fg = hl("FloatBorder").fg, bg = c.black }) .. "# "
+  txt = txt .. "%#" .. shl("StlFilePermission" .. buf, { fg = col, bg = c.black }) .. "#" .. icon
+  txt = txt .. "%#" .. shl("StlFileEnd" .. buf, { fg = c.black, bg = hl("Normal").bg }) .. "#"
   return txt
 end
 
 function M.Location()
   local linec = #vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local pos = vim.api.nvim_win_get_cursor(0)
-  local curl, ccol = pos[1], pos[2]
+  local curl, ccol = pos[1], tostring(pos[2] + 1)
   local perc = math.floor(curl / linec * 100)
+  while #ccol < 3 do
+    ccol = " " .. ccol
+  end
   local txt = "%#" .. shl("StlLocationStart", { fg = c.black, bg = hl("Normal").bg }) .. "#%#StlNormal# (%#"
-  txt = txt .. shl("StlLocationLineCur", { fg = hl("TSRainbowGreen").fg, bg = c.black }) ..
-      "#" .. curl .. "%#StlNormal#/%#"
-  txt = txt .. shl("StlLocationLineMax", { fg = hl("TSRainbowRed").fg, bg = c.black }) ..
-      "#" .. linec .. "%#StlNormal#):%#"
-  txt = txt ..
-      shl("StlLocationColCur", { fg = hl("TSRainbowBlue").fg, bg = c.black }) .. "#" .. (ccol + 1) .. "%#StlNormal# %#"
+  txt = txt .. shl("StlLocationLineCur", { fg = hl("TSRainbowGreen").fg, bg = c.black }) .. "#"
+  txt = txt .. curl .. "%#StlNormal#/%#" .. shl("StlLocationLineMax", { fg = hl("TSRainbowRed").fg, bg = c.black })
+  txt = txt .. "#" .. linec .. "%#StlNormal#):%#"
+  txt = txt .. shl("StlLocationColCur", { fg = hl("TSRainbowBlue").fg, bg = c.black })
+  txt = txt .. "#" .. ccol .. "%#StlNormal# %#"
   txt = txt .. shl("StlLocationPercentReverse", { fg = hl("TSRainbowOrange").fg, bg = c.black }) .. "#%#"
   txt = txt .. shl("StlLocationPercent", { fg = c.black, bg = hl("TSRainbowOrange").fg }) .. "# " .. perc .. "%% "
   return txt
@@ -214,9 +217,22 @@ function M.Git()
   return txt
 end
 
-function M.FullFilePath()
-  local txt = "%#" .. shl("StlFullPathSide", { bg = hl("Normal").bg, fg = c.black }) .. "#%#"
-  txt = txt .. shl("StlFullPath", { bg = c.black, fg = c.orange }) .. "#%= " .. vim.api.nvim_buf_get_name(0) .. "%= %#StlFullPathSide#"
+function M.InfoBar()
+  local txt = "%#" .. shl("StlInfoBarSide", { bg = hl("Normal").bg, fg = c.black }) .. "#%#"
+  local msg = vim.g.statusline_message
+  if msg then
+    local timer = vim.loop.new_timer()
+    timer:start(5000, 0, vim.schedule_wrap(function()
+      if vim.g.statusline_message == msg then
+        vim.g.statusline_message = nil
+        vim.cmd.redraws()
+      end
+    end))
+  end
+  txt = txt .. shl("StlInfoBar", { bg = c.black, fg = c.orange }) .. "#%= %f"
+  txt = txt ..
+  (msg and (" %#" .. shl("StlMessage", { fg = c.blue, bg = c.black }) .. "#" .. msg .. "%#StlInfoBar#") or "") ..
+  "%= %#StlInfoBarSide#"
   return txt
 end
 
@@ -234,7 +250,7 @@ function M.get()
   if #diags > 0 then
     right = M.Diagnostic() .. right
   end
-  return left .. M.FullFilePath() .. right
+  return left .. M.InfoBar() .. right
 end
 
 return M
