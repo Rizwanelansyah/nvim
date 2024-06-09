@@ -10,7 +10,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
         vim.cmd.redraws()
       end))
     else
-      vim.g.statusline_message = "LSP(" .. tostring(value.percentage) .. "%%): " .. value.title .. (value.message and (" (" .. value.message .. ") ") or "")
+      vim.g.statusline_message = "LSP" .. (value.percentage and "(" .. tostring(value.percentage) .. "%%)" or "") .. ": " .. value.title .. (value.message and (" (" .. value.message .. ") ") or "")
       vim.cmd.redraws()
     end
   end,

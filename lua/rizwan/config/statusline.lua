@@ -82,6 +82,7 @@ local lsp_clients_color = {
   jsonls = icext.json.color,
   ccls = icext.c.color,
   gopls = icext.go.color,
+  tsserver = icext.ts.color,
 }
 
 local lsp_clients_icon = {
@@ -94,6 +95,7 @@ local lsp_clients_icon = {
   jsonls = " ",
   ccls = " ",
   gopls = " ",
+  tsserver = " ",
 }
 
 function M.Mode()

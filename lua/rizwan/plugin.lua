@@ -61,8 +61,9 @@ return {
   },
 
   {
-    "Rizwanelansyah/simplyfile.nvim",
-    tag = "v0.6", --[[ dir = "/home/rizwan/Projects/nvim/simplyfile.nvim", ]]
+    -- "Rizwanelansyah/simplyfile.nvim",
+    -- tag = "v0.6",
+    dir = "/home/rizwan/Projects/nvim/simplyfile.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = cfg("simplyfile"),
   },

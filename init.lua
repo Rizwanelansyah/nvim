@@ -10,6 +10,7 @@ end
 vim.filetype.add {
   extension = {
     html = "html",
+    ts = "typescript",
   }
 }
 

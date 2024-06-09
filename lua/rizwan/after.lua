@@ -1,8 +1,8 @@
 local on_color_scheme = function()
   local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
   local pmenu = vim.api.nvim_get_hl(0, { name = "Pmenu" })
-  local colors = require("onedark.colors")
   local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
+  local colors = require("onedark.colors")
   vim.api.nvim_set_hl(0, "Title", { fg = normal.fg, bg = normal.bg, italic = true })
   vim.api.nvim_set_hl(0, "NormalFloat", { fg = normal.fg, bg = normal.bg })
   vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#989898", bg = normal.bg })
@@ -12,6 +12,7 @@ local on_color_scheme = function()
   vim.api.nvim_set_hl(0, "CursorLineNr", { reverse = true, italic = true })
   vim.api.nvim_set_hl(0, "MatchParen", { fg = colors.orange, bold = true })
   vim.api.nvim_set_hl(0, "Folded", { fg = comment.fg, bg = normal.bg, italic = true })
+  vim.cmd("hi CmpItemMenu guifg="..colors.purple)
 end
 
 vim.api.nvim_create_autocmd("ColorScheme", {

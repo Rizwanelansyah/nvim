@@ -1,5 +1,7 @@
 local mapping = require("simplyfile.mapping")
 local simplyfile = require("simplyfile")
+local util = require("simplyfile.util")
+
 simplyfile.setup {
   border = {
     up    = "single",
@@ -14,7 +16,7 @@ simplyfile.setup {
         prompt = "Trassh This Files",
       }, function(choice)
         if choice == "Yes" then
-          vim.cmd("silent !trash " .. dir.absolute)
+          vim.cmd("silent !trash " .. util.sanitize(dir.absolute))
           ---@diagnostic disable-next-line: missing-fields
           mapping.refresh { absolute = "" }
         end
