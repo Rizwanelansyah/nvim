@@ -12,7 +12,7 @@ local on_color_scheme = function()
   vim.api.nvim_set_hl(0, "CursorLineNr", { reverse = true, italic = true })
   vim.api.nvim_set_hl(0, "MatchParen", { fg = colors.orange, bold = true })
   vim.api.nvim_set_hl(0, "Folded", { fg = comment.fg, bg = normal.bg, italic = true })
-  vim.cmd("hi CmpItemMenu guifg="..colors.purple)
+  vim.cmd("hi CmpItemMenu guifg=" .. colors.purple)
 end
 
 vim.api.nvim_create_autocmd("ColorScheme", {

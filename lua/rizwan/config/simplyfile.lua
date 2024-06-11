@@ -47,11 +47,7 @@ simplyfile.setup {
     down = 3,
   },
   preview = {
-    show = function(dir)
-      if dir.is_folder then return true end
-      local name = dir.name
-      return not (name:match("%.png$") or name:match("%.jpe?g$") or name:match("%.mp4$") or name:match("%.svg$"))
-    end
+    image = true,
   },
 }
 

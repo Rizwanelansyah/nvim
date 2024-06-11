@@ -26,8 +26,8 @@ return {
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-      'hrsh7th/nvim-cmp',
       { "folke/neodev.nvim", opts = {} },
+      'hrsh7th/nvim-cmp',
     },
     config = cfg("lsp"),
   },
@@ -61,10 +61,22 @@ return {
   },
 
   {
-    -- "Rizwanelansyah/simplyfile.nvim",
-    -- tag = "v0.6",
-    dir = "/home/rizwan/Projects/nvim/simplyfile.nvim",
+    "Rizwanelansyah/simplyfile.nvim",
+    tag = "v0.7",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = cfg("simplyfile"),
+  },
+
+  {
+    "vhyrro/luarocks.nvim",
+    priority = 1001,
+    opts = {
+      rocks = { "magick" },
+    },
+  },
+  {
+    "3rd/image.nvim",
+    dependencies = { "luarocks.nvim" },
+    config = cfg("image"),
   },
 }
