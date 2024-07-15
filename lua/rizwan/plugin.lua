@@ -14,6 +14,7 @@ return {
       'hrsh7th/cmp-cmdline',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
+      "foke/lazydev.nvim",
     },
     config = cfg("nvim_cmp"),
   },
@@ -24,9 +25,25 @@ return {
   },
 
   {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    dependencies = {
+      { "Bilal2453/luvit-meta", lazy = true },
+    },
+    opts = {
+      library = {
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
+      },
+      enabled = function(root_dir)
+        return (vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled) and
+            (root_dir:match("^" .. vim.env.HOME .. "/Projects/nvim/.*") or root_dir == vim.env.HOME .. "/.dotfiles/.config/nvim")
+      end
+    },
+  },
+
+  {
     'neovim/nvim-lspconfig',
     dependencies = {
-      { "folke/neodev.nvim", opts = {} },
       'hrsh7th/nvim-cmp',
     },
     config = cfg("lsp"),
@@ -61,22 +78,34 @@ return {
   },
 
   {
+    dir = "/home/rizwan/Projects/nvim/windui.nvim",
+  },
+
+  {
     "Rizwanelansyah/simplyfile.nvim",
-    tag = "v0.7",
+    tag = "v0.8",
+    -- dir = "/home/rizwan/Projects/nvim/simplyfile.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = cfg("simplyfile"),
   },
 
+  -- {
+  --   "vhyrro/luarocks.nvim",
+  --   priority = 1001,
+  --   opts = {
+  --     rocks = { "magick" },
+  --   },
+  -- },
+  -- {
+  --   "3rd/image.nvim",
+  --   dependencies = { "luarocks.nvim" },
+  --   config = cfg("image"),
+  -- },
+
   {
-    "vhyrro/luarocks.nvim",
-    priority = 1001,
-    opts = {
-      rocks = { "magick" },
-    },
-  },
-  {
-    "3rd/image.nvim",
-    dependencies = { "luarocks.nvim" },
-    config = cfg("image"),
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
   },
 }

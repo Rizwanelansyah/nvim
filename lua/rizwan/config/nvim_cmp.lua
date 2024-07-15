@@ -42,13 +42,13 @@ cmp.setup({
   formatting = {
     format = function (entry, vim_item)
       local kind = vim_item.kind
-      vim_item.kind = " " .. (kind_icons[kind] or "??") .. " "
-      vim_item.kind_hl_group = "CmpItemKind" .. kind
+      vim_item.kind = " " .. (kind_icons[kind or "?"] or "??") .. " "
+      vim_item.kind_hl_group = "CmpItemKind" .. (kind or "")
       if entry:is_deprecated() then
         vim_item.abbr_hl_group = "CmpItemAbbrDeprecated"
       end
 
-      vim_item.menu = "(" .. kind .. ")"
+      vim_item.menu = "(" .. (kind or "??") .. ")"
       vim_item.menu_hl_group = "CmpItemMenu"
       return vim_item
     end,
@@ -80,6 +80,7 @@ cmp.setup({
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = "lazydev", group_index = 0 },
   }, {
     { name = 'buffer' },
   })

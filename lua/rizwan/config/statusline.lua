@@ -121,9 +121,8 @@ function M.File(buf)
   txt = txt .. "%#" .. shl("StlFileIcon" .. buf, { fg = hl(icon_hl).fg, bg = c.black }) .. "#"
   txt = txt .. "%#StlFileIcon" .. buf .. "# " .. buf .. ":" .. (fn == "" and "no_name" or fn) .. " "
 
-  local ro = vim.api.nvim_get_option_value("readonly", { buf = buf }) and
-  not vim.api.nvim_get_option_value("modifiable", { buf = buf })
-  local ch = vim.api.nvim_get_option_value("modified", { buf = buf })
+  local ro = vim.bo[buf].readonly or not vim.bo[buf].modifiable
+  local ch = vim.bo[buf].modified
   local col = "#989898"
   local icon = "󰦨 "
   if ro then

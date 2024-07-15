@@ -33,6 +33,7 @@ vim.api.nvim_create_autocmd('DiagnosticChanged', {
   end,
 })
 require("rizwan.overrides.ui")
+require("rizwan.overrides.windui")
 
 vim.keymap.set('n', '<leader>bb', ':buffer ')
 vim.keymap.set('n', '<leader>bn', '<CMD>bnext<CR>')
@@ -65,3 +66,6 @@ vim.keymap.set('v', 's[', "<ESC>`>a]<ESC>`<i[<ESC>")
 vim.keymap.set('v', 's]', "<ESC>`>a]<ESC>`<i[<ESC>")
 vim.keymap.set('v', 's"', "<ESC>`>a\"<ESC>`<i\"<ESC>")
 vim.keymap.set('v', 's\'', "<ESC>`>a'<ESC>`<i'<ESC>")
+
+local ui = require("rizwan.config.ui")
+vim.keymap.set('n', '<leader>bc', ui.quickbuf)

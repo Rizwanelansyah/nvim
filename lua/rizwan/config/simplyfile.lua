@@ -1,6 +1,7 @@
 local mapping = require("simplyfile.mapping")
 local simplyfile = require("simplyfile")
 local util = require("simplyfile.util")
+local image_path = vim.env.HOME .. "/.config/nvim/lua/rizwan/images"
 
 simplyfile.setup {
   border = {
@@ -22,13 +23,13 @@ simplyfile.setup {
         end
       end)
     end,
-    ["<CR>"] = function(dir)
-      if not dir then return end
-      if not dir.is_folder then
-        simplyfile.close()
-        vim.cmd("e " .. dir.absolute)
-      end
-    end,
+    -- ["<CR>"] = function(dir)
+    --   if not dir then return end
+    --   if not dir.is_folder then
+    --     simplyfile.close()
+    --     vim.cmd("e " .. dir.absolute)
+    --   end
+    -- end,
     ["<C-u>"] = mapping.under_cursor_as_cwd,
     ["<C-p>"] = mapping.current_path_as_cwd,
   },
@@ -47,7 +48,19 @@ simplyfile.setup {
     down = 3,
   },
   preview = {
-    image = true,
+    image = false,
+  },
+  grid_mode = {
+    enabled = false,
+    -- get_icon = function(dir)
+    --   local renderrable = { "%.png$", "%.jpe?g$", "%.avif$", "%.gif$", "%.webp$", "%.svg$", }
+    --   if util.matches(dir.absolute, renderrable) then return dir.absolute end
+    --   if dir.is_folder then
+    --     return image_path .. "/simplyfile/folder.png"
+    --   else
+    --     return image_path .. "/simplyfile/file.png"
+    --   end
+    -- end
   },
 }
 
