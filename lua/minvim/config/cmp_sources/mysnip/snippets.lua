@@ -10,10 +10,14 @@ M.javascript = {
 }
 M.typescript = vim.tbl_extend("force", M.javascript, {})
 
-M.php = {
+M.html = {
+  ["in"] = "<label for=\"$1\">\n\t<input id=\"$1\" name=\"$2\" type=\"${3:text}\">$0\n</label>"
+}
+M.php = vim.tbl_extend('force', M.html, {
   dd = "var_dump(${1:$value});\ndie;$0",
   php = "<?php\n\t$0\n?>",
-}
+})
+M.blade = M.php
 
 M.go = {
   ie = "if err != nil {\n\t$0\n}",
